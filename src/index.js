@@ -7,9 +7,51 @@
  *
  * Learn more at https://developers.cloudflare.com/workers/
  */
+import { EmailMessage } from "cloudflare:email";
+import { createMimeMessage } from "mimetext";
+
+const expected_args = ["name", "email", "subject", "body"]
 
 export default {
+	/**
+	 * @param {Request} request
+	 * @param {Env} env
+	 * @param {ExecutionContext} ctx
+	 * @returns {Promise<Response>}
+	 */
 	async fetch(request, env, ctx) {
-		return new Response('Hello World!');
+		let args = new URL(request.url).searchParams;
+		let failed = [];
+		// detect if missing an argument before using arguments
+		expected_args.forEach(arg => {
+			console.log(arg)
+			if (!args.has(arg)) {
+				failed.push(arg)
+			}
+		});
+		if (failed) {
+			return Response.json({ "response": `Failed, missing following arguments: ${failed}` })
+		}
+		const msg = createMimeMessage();
+		msg.setSender({ name: args.get("name"), addr: args.get("address") });
+		msg.setRecipient("vreosd+websiteemails@proton.me");
+		msg.setSubject(args.get("subject"));
+		msg.addMessage({
+			contentType: 'text/plain',
+			data: args.get("body")
+		});
+
+		var message = new EmailMessage(
+			args.get("address"),
+			"vresod+websiteemails@proton.me",
+			msg.asRaw()
+		);
+		try {
+			await env.SEB.send(message);
+		} catch (e) {
+			return new Response(e.message);
+		}
+
+		return Response.json({ "response": "Success" });
 	},
 };
