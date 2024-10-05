@@ -24,13 +24,12 @@ export default {
 		let failed = [];
 		// detect if missing an argument before using arguments
 		expected_args.forEach(arg => {
-			console.log(arg)
 			if (!args.has(arg)) {
 				failed.push(arg)
 			}
 		});
 		console.log(failed)
-		if (!failed || !failed.length) {
+		if (failed.length) {
 			return Response.json({ "response": `Failed, missing following arguments: ${failed}` })
 		}
 		console.log("shouldn't be here")
