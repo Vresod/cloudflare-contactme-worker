@@ -29,9 +29,11 @@ export default {
 				failed.push(arg)
 			}
 		});
-		if (failed == []) {
+		console.log(failed)
+		if (!(failed == [])) {
 			return Response.json({ "response": `Failed, missing following arguments: ${failed}` })
 		}
+		console.log("shouldn't be here")
 		const msg = createMimeMessage();
 		msg.setSender({ name: args.get("name"), addr: args.get("address") });
 		msg.setRecipient("vreosd+websiteemails@proton.me");
