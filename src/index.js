@@ -32,14 +32,13 @@ export default {
 			return Response.json({ "response": `Failed, missing following arguments: ${failed}` }, { "status": 400 })
 		}
 		const msg = createMimeMessage();
-		msg.setSender({ name: args.get("name"), addr: args.get("address") });
+		msg.setSender({ name: args.get("name"), addr: args.get("email") });
 		msg.setRecipient("vreosd+websiteemails@proton.me");
 		msg.setSubject(args.get("subject"));
 		msg.addMessage({
 			contentType: 'text/plain',
 			data: args.get("body")
 		});
-		console.log(msg)
 
 		var message = new EmailMessage(
 			args.get("address"),
