@@ -29,7 +29,7 @@ export default {
 				failed.push(arg)
 			}
 		});
-		if (failed) {
+		if (failed == []) {
 			return Response.json({ "response": `Failed, missing following arguments: ${failed}` })
 		}
 		const msg = createMimeMessage();
