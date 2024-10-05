@@ -3,6 +3,9 @@ name = "cloudflare-contactme-worker"
 main = "src/index.js"
 compatibility_date = "2024-09-25"
 compatibility_flags = ["nodejs_compat"]
+send_email = [
+	{ name = "SEB", destination_address = "vresod+websiteemails@proton.me" },
+]
 
 # Workers Logs
 # Docs: https://developers.cloudflare.com/workers/observability/logs/workers-logs/
@@ -22,10 +25,8 @@ enabled = true
 # - https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
 # Note: Use secrets to store sensitive data.
 # - https://developers.cloudflare.com/workers/configuration/secrets/
-[vars]
-send_email = [
-	{ type = "send_email", name = "email-binding", destination_address = "vresod+websiteemails@proton.me" },
-]
+#[vars]
+
 # Bind the Workers AI model catalog. Run machine learning models, powered by serverless GPUs, on Cloudflare’s global network
 # Docs: https://developers.cloudflare.com/workers/wrangler/configuration/#workers-ai
 # [ai]

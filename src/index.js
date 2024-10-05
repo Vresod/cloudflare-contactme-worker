@@ -10,8 +10,10 @@
 import { EmailMessage } from "cloudflare:email";
 import { createMimeMessage } from "mimetext";
 
-const expected_args = ["name", "email", "subject", "body"]
+export const expected_args = ["name", "email", "subject", "body"]
+export const send_to = "websiteemails@vresod.xyz";
 
+// almost entirely copied from the docs
 export default {
 	/**
 	 * @param {Request} request
@@ -33,7 +35,7 @@ export default {
 		}
 		const msg = createMimeMessage();
 		msg.setSender({ name: args.get("name"), addr: args.get("email") });
-		msg.setRecipient("vreosd+websiteemails@proton.me");
+		msg.setRecipient(send_to);
 		msg.setSubject(args.get("subject"));
 		msg.addMessage({
 			contentType: 'text/plain',
@@ -41,16 +43,16 @@ export default {
 		});
 
 		var message = new EmailMessage(
-			args.get("address"),
-			"vresod+websiteemails@proton.me",
+			args.get("email"),
+			send_to,
 			msg.asRaw()
 		);
-		console.log(message)
-		try {
-			await env.SEB.send(message);
-		} catch (e) {
-			return new Response(e.message);
-		}
+
+		// try {
+		await env.SEB.send(message);
+		// } catch (e) {
+		// 	return new Response(e.message);
+		// }
 
 		return Response.json({ "response": "Success" });
 	},
