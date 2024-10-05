@@ -30,7 +30,7 @@ export default {
 			}
 		});
 		console.log(failed)
-		if (!(failed == [])) {
+		if (!failed || !failed.length) {
 			return Response.json({ "response": `Failed, missing following arguments: ${failed}` })
 		}
 		console.log("shouldn't be here")
