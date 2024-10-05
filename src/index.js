@@ -28,11 +28,9 @@ export default {
 				failed.push(arg)
 			}
 		});
-		console.log(failed)
 		if (failed.length) {
-			return Response.json({ "response": `Failed, missing following arguments: ${failed}` })
+			return Response.json({ "response": `Failed, missing following arguments: ${failed}` }, { "status": 400 })
 		}
-		console.log("shouldn't be here")
 		const msg = createMimeMessage();
 		msg.setSender({ name: args.get("name"), addr: args.get("address") });
 		msg.setRecipient("vreosd+websiteemails@proton.me");
@@ -41,12 +39,14 @@ export default {
 			contentType: 'text/plain',
 			data: args.get("body")
 		});
+		console.log(msg)
 
 		var message = new EmailMessage(
 			args.get("address"),
 			"vresod+websiteemails@proton.me",
 			msg.asRaw()
 		);
+		console.log(message)
 		try {
 			await env.SEB.send(message);
 		} catch (e) {
