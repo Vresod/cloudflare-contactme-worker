@@ -37,9 +37,9 @@ export default {
 			return Response.json({ "response": `Failed, missing following arguments: ${failed}` }, { "status": 400 })
 		}
 		const { data, error } = await resend.emails.send({
-			from: my_email,
+			from: `${args.get("name")} <${my_email}>`,
 			replyTo: args.get("replyto"),
-			to: my_email,
+			to: `Vresod <${my_email}>`,
 			subject: `Contacted by "${args.get("name")}"`,
 			text: args.get("body")
 		})
@@ -47,6 +47,6 @@ export default {
 			return Response.json({ "response": "Failed, resend threw error", "error": error, "data": data }, { "status": 400 })
 		}
 
-		return new Response("Success");
+		return new Response(null, { "status": 204 });
 	},
 };
