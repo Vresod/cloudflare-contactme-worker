@@ -7,11 +7,9 @@
  *
  * Learn more at https://developers.cloudflare.com/workers/
  */
-import { EmailMessage } from "cloudflare:email";
-import { createMimeMessage } from "mimetext";
+import { Resend } from "resend";
 
-export const expected_args = ["name", "email", "subject", "body"]
-export const send_to = "websiteemails@vresod.xyz";
+export const expected_args = ["name", "replyto", "body"]
 
 // almost entirely copied from the docs
 export default {
@@ -24,6 +22,8 @@ export default {
 	async fetch(request, env, ctx) {
 		let args = new URL(request.url).searchParams;
 		let failed = [];
+		const resend = new Resend(env.RESEND_API_KEY);
+		const my_email = env.MY_EMAIL;
 		// detect if missing an argument before using arguments
 		expected_args.forEach(arg => {
 			if (!args.has(arg)) {
@@ -33,27 +33,17 @@ export default {
 		if (failed.length) {
 			return Response.json({ "response": `Failed, missing following arguments: ${failed}` }, { "status": 400 })
 		}
-		const msg = createMimeMessage();
-		msg.setSender({ name: args.get("name"), addr: args.get("email") });
-		msg.setRecipient(send_to);
-		msg.setSubject(args.get("subject"));
-		msg.addMessage({
-			contentType: 'text/plain',
-			data: args.get("body")
-		});
+		const { data, error } = await resend.emails.send({
+			from: my_email,
+			replyTo: args.get("replyto"),
+			to: my_email,
+			subject: `Contacted by "${args.get("name")}"`,
+			text: args.get("body")
+		})
+		if (error) {
+			return Response.json({ "response": "Failed, resend threw error", "error": error, "data": data }, { "status": 400 })
+		}
 
-		var message = new EmailMessage(
-			args.get("email"),
-			send_to,
-			msg.asRaw()
-		);
-
-		// try {
-		await env.SEB.send(message);
-		// } catch (e) {
-		// 	return new Response(e.message);
-		// }
-
-		return Response.json({ "response": "Success" });
+		return new Response("Success");
 	},
 };

@@ -14,7 +14,6 @@
 		"wrangler": "^3.60.3"
 	},
 	"dependencies": {
-		"@cloudflare/workers-types": "^4.20240925.0",
-		"mimetext": "^3.0.24"
+		"resend": "^4.0.0"
 	}
 }
