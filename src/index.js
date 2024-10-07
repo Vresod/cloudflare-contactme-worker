@@ -20,7 +20,10 @@ export default {
 	 * @returns {Promise<Response>}
 	 */
 	async fetch(request, env, ctx) {
-		let args = new URL(request.url).searchParams;
+		if (request.method != "POST") {
+			return Response.json({ "response": "Failed, request must be POST" }, { "status": 400 })
+		}
+		let args = new URLSearchParams(await request.text())
 		let failed = [];
 		const resend = new Resend(env.RESEND_API_KEY);
 		const my_email = env.MY_EMAIL;
