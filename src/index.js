@@ -37,7 +37,7 @@ export default {
 		const my_email = env.MY_EMAIL;
 		// detect if missing an argument before using arguments
 		expected_args.forEach(arg => {
-			if (!args.has(arg)) {
+			if (!(args.has(arg) && args.get(arg))) {
 				failed.push(arg)
 			}
 		});
