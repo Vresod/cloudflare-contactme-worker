@@ -20,10 +20,13 @@ export default {
 	 * @returns {Promise<Response>}
 	 */
 	async fetch(request, env, ctx) {
+		const headers = new Headers({
+			"Access-Control-Allow-Origin": "*"
+		});
 		if (request.method != "POST") {
-			return Response.json({ "response": "Failed, request must be POST" }, { "status": 400 })
+			return Response.json({ "response": "Failed, request must be POST" }, { "status": 400, "headers": headers })
 		}
-		let args = new URLSearchParams(await request.text())
+		const args = new URLSearchParams(await request.text())
 		let failed = [];
 		const resend = new Resend(env.RESEND_API_KEY);
 		const my_email = env.MY_EMAIL;
@@ -34,7 +37,7 @@ export default {
 			}
 		});
 		if (failed.length) {
-			return Response.json({ "response": `Failed, missing following arguments: ${failed}` }, { "status": 400 })
+			return Response.json({ "response": `Failed, missing following arguments: ${failed}` }, { "status": 400, "headers": headers })
 		}
 		const { data, error } = await resend.emails.send({
 			from: `${args.get("name")} <${my_email}>`,
@@ -44,9 +47,9 @@ export default {
 			text: args.get("body")
 		})
 		if (error) {
-			return Response.json({ "response": "Failed, resend threw error", "error": error, "data": data }, { "status": 400 })
+			return Response.json({ "response": "Failed, resend threw error", "error": error, "data": data }, { "status": 400, "headers": headers })
 		}
 
-		return Response.json({ "response": "Success" }, { "status": 200 });
+		return Response.json({ "response": "Success" }, { "status": 200, "headers": headers });
 	},
 };
