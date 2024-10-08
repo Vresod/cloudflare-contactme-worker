@@ -47,6 +47,6 @@ export default {
 			return Response.json({ "response": "Failed, resend threw error", "error": error, "data": data }, { "status": 400 })
 		}
 
-		return new Response(null, { "status": 204 });
+		return Response.json({ "response": "Success" }, { "status": 200 });
 	},
 };
