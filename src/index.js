@@ -37,7 +37,7 @@ export default {
 			}
 		});
 		if (failed.length) {
-			return Response.json({ "response": `Failed, missing following arguments: ${failed}` }, { "status": 400, "headers": headers })
+			return Response.json({ "response": `Failed, missing following arguments: ${failed}` }, { "status": 422, "headers": headers })
 		}
 		const { data, error } = await resend.emails.send({
 			from: `${args.get("name")} <${my_email}>`,
@@ -47,7 +47,7 @@ export default {
 			text: args.get("body")
 		})
 		if (error) {
-			return Response.json({ "response": "Failed, resend threw error", "error": error, "data": data }, { "status": 400, "headers": headers })
+			return Response.json({ "response": "Failed, resend threw error", "error": error, "data": data }, { "status": error.statusCode || 400, "headers": headers })
 		}
 
 		return Response.json({ "response": "Success" }, { "status": 200, "headers": headers });
